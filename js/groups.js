@@ -5,7 +5,7 @@ import { router } from './router.js';
 
 function refreshCurrentPage() {
   if (router.currentPage === 'mygroups') loadMyGroups();
-  else if (router.currentPage === 'room' && router.currentRoomId) router.navigate('room', router.currentRoomId);
+  else if (router.currentPage === 'room' && router.currentRoomId) router._resolve();
   else loadGroups();
 }
 
