@@ -26,25 +26,6 @@ A real-time study group coordination app for DKTE College students. Find, create
 | Backend  | Supabase (Postgres + Auth + Storage)|
 | Hosting  | Netlify                             |
 
-## Project Structure
-
-```
-StudySync/
-├── index.html          # Single-page app shell + inline router logic
-├── css/
-│   ├── base.css        # Reset, variables, typography
-│   ├── components.css  # Cards, buttons, forms, toasts
-│   ├── layout.css      # Navbar, page layout, grid
-│   └── themes.css      # Light / dark theme tokens
-└── js/
-    ├── supabase.js     # Supabase client init
-    ├── auth.js         # Sign up, sign in, sign out, auth state
-    ├── groups.js       # Load, create, join, leave, delete groups
-    ├── roomFiles.js    # Room detail, file upload/download/delete
-    ├── router.js       # Hash-based client-side router
-    └── ui.js           # Rendering, cards, room page, toasts, dark mode
-```
-
 ## Getting Started
 
 No build step required — it's plain HTML/CSS/JS.
