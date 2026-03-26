@@ -1,0 +1,129 @@
+/* ── Dark Theme ─────────────────────────────────────────────── */
+/* Applied via [data-theme="dark"] on <html> */
+
+[data-theme="dark"] {
+  --color-bg: #111110;
+  --color-bg-card: #1C1C1A;
+  --color-bg-input: #242422;
+  --color-bg-navbar: #161614;
+
+  --color-text-primary: #EDECEA;
+  --color-text-secondary: #9C9893;
+  --color-text-tertiary: #6B6965;
+
+  --color-border: #2E2D2A;
+  --color-border-strong: #3E3D39;
+
+  --color-primary: #7B72E9;
+  --color-primary-light: #1E1C3A;
+  --color-primary-hover: #9089EF;
+
+  --color-success: #1D9E75;
+  --color-success-light: #0D2A21;
+
+  --color-danger: #D96C6C;
+  --color-danger-light: #2A1010;
+
+  --color-amber: #D4A24A;
+  --color-amber-light: #2A1E08;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* Navbar border in dark */
+[data-theme="dark"] .navbar {
+  border-bottom-color: var(--color-border);
+}
+
+/* Form inputs dark */
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-textarea,
+[data-theme="dark"] .search-input {
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+/* Select arrow color fix in dark */
+[data-theme="dark"] .form-select {
+  color-scheme: dark;
+}
+
+/* ── Dark mode icon & text contrast fixes ───────────────────── */
+
+/* Nav links */
+[data-theme="dark"] .nav-link {
+  color: var(--color-text-secondary);
+}
+[data-theme="dark"] .nav-link:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+/* Subject badge — ensure text is readable on dark primary-light bg */
+[data-theme="dark"] .subject-badge {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/* Completed pill — border bg is very dark, bump text up */
+[data-theme="dark"] .pill-completed {
+  background: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+/* Card info icons — use secondary so they're visible on dark card */
+[data-theme="dark"] .ic {
+  color: var(--color-text-secondary);
+}
+
+/* Capacity / member count */
+[data-theme="dark"] .member-count {
+  color: var(--color-text-secondary);
+}
+
+/* Progress bar track */
+[data-theme="dark"] .progress-bar {
+  background: var(--color-border-strong);
+}
+
+/* Outline button border visibility */
+[data-theme="dark"] .btn-outline {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+[data-theme="dark"] .btn-outline:hover {
+  background: var(--color-primary-light);
+}
+
+/* Ghost button */
+[data-theme="dark"] .btn-ghost {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-strong);
+}
+[data-theme="dark"] .btn-ghost:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+/* Disabled button */
+[data-theme="dark"] .btn-disabled {
+  background: var(--color-border-strong);
+  color: var(--color-text-tertiary);
+  border-color: transparent;
+}
+
+/* Chip (if re-added later) */
+[data-theme="dark"] .chip {
+  background: var(--color-bg);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-secondary);
+}
+
+/* Auth card links */
+[data-theme="dark"] .auth-switch a {
+  color: var(--color-primary);
+}

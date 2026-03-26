@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySync — DKTE College</title>
+
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/themes.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Navbar (hidden on auth page) ───────────────────────── -->
+  <nav class="navbar" id="navbar" style="display:none">
+    <div class="navbar-inner">
+      <span class="navbar-brand">StudySync</span>
+
+      <div class="navbar-nav">
+        <button class="nav-link" id="nav-home"     onclick="navigate('home')">Home</button>
+        <button class="nav-link" id="nav-mygroups" onclick="navigate('mygroups')">My Groups</button>
+        <button class="nav-link" id="nav-create"   onclick="navigate('create')">+ Create</button>
+      </div>
+
+      <div class="navbar-actions">
+        <button id="theme-toggle" onclick="handleThemeToggle()" title="Toggle dark mode">
+          <!-- icon swapped by JS -->
+          <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="btn btn-ghost btn-sm" id="signout-btn" onclick="handleSignOut()">Sign out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- PAGE: AUTH                                               -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="page-auth" style="display:none">
+    <div class="auth-card">
+
+      <!-- Sign In Form -->
+      <div id="form-signin">
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Sign in with your DKTE email to continue.</p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="signin-email">Email</label>
+            <input class="form-input" id="signin-email" type="email" placeholder="you@dkte.ac.in" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signin-password">Password</label>
+            <input class="form-input" id="signin-password" type="password" placeholder="Your password" />
+          </div>
+          <button class="btn btn-primary btn-full" onclick="handleSignIn()">Sign In</button>
+        </div>
+
+        <p class="auth-switch">
+          No account? <a href="#" onclick="switchToSignUp()">Sign up</a>
+        </p>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="form-signup" style="display:none">
+        <h1 class="auth-title">Create account</h1>
+        <p class="auth-subtitle">Only @dkte.ac.in email addresses are allowed.</p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="signup-email">DKTE Email</label>
+            <input class="form-input" id="signup-email" type="email" placeholder="you@dkte.ac.in" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password</label>
+            <input class="form-input" id="signup-password" type="password" placeholder="Min. 6 characters" />
+          </div>
+          <button class="btn btn-primary btn-full" onclick="handleSignUp()">Create Account</button>
+        </div>
+
+        <p class="auth-switch">
+          Have an account? <a href="#" onclick="switchToSignIn()">Sign in</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- PAGE: HOME (All Groups)                                 -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="page-home" class="page" style="display:none">
+
+    <!-- Hero Stats -->
+    <div class="hero">
+      <div class="hero-text">
+        <h2>Find your study group</h2>
+        <p>Collaborate with DKTE classmates across every subject.</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-groups">—</div>
+          <div class="stat-label">Active Groups</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-students">—</div>
+          <div class="stat-label">Students Studying</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input
+          class="search-input"
+          id="search-input"
+          type="text"
+          placeholder="Search by subject, location, description…"
+          oninput="handleSearch(this.value)"
+        />
+      </div>
+    </div>
+
+    <!-- Active Rooms -->
+    <div class="groups-grid" id="groups-container">
+      <div class="empty-state">Loading rooms…</div>
+    </div>
+
+    <!-- Past Sessions -->
+    <div style="margin-top:22px;">
+      <div class="page-header" style="margin-bottom:10px;">
+        <div>
+          <h2 class="page-title" style="font-size:18px;">Past sessions</h2>
+          <p class="page-subtitle" style="margin-top:2px;">Rooms that have ended.</p>
+        </div>
+      </div>
+      <div class="groups-grid" id="past-container">
+        <div class="empty-state">No past sessions yet.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- PAGE: MY GROUPS                                         -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="page-mygroups" class="page" style="display:none">
+
+    <div class="page-header">
+      <div>
+        <h2 class="page-title">My Groups</h2>
+        <p class="page-subtitle">Groups you've created or joined.</p>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="navigate('create')">+ Create New</button>
+    </div>
+
+    <div class="groups-grid" id="mygroups-container">
+      <div class="empty-state">Loading your rooms…</div>
+    </div>
+
+    <div style="margin-top:22px;">
+      <div class="page-header" style="margin-bottom:10px;">
+        <div>
+          <h2 class="page-title" style="font-size:18px;">Past sessions</h2>
+          <p class="page-subtitle" style="margin-top:2px;">Rooms you were part of that have ended.</p>
+        </div>
+      </div>
+      <div class="groups-grid" id="mygroups-past-container">
+        <div class="empty-state">No past sessions yet.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- PAGE: CREATE                                            -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="page-create" class="page" style="display:none">
+
+    <div class="page-header">
+      <div>
+        <h2 class="page-title">Create a Study Room</h2>
+        <p class="page-subtitle">Set a subject, location, and time slot for others to join.</p>
+      </div>
+    </div>
+
+    <div class="create-card">
+      <div class="form-group">
+        <label class="form-label" for="create-subject">Subject *</label>
+        <input
+          class="form-input"
+          id="create-subject"
+          type="text"
+          list="subject-suggestions"
+          placeholder="e.g. DSA, DBMS, OS"
+        />
+        <datalist id="subject-suggestions">
+          <option value="DSA"></option>
+          <option value="DBMS"></option>
+          <option value="OS"></option>
+          <option value="CN"></option>
+          <option value="Aptitude"></option>
+        </datalist>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="create-desc">Description</label>
+        <textarea class="form-textarea" id="create-desc" placeholder="What will you be covering? Any requirements?"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="create-date">Date *</label>
+          <input class="form-input" id="create-date" type="date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="create-time">Start time *</label>
+          <input class="form-input" id="create-time" type="time" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="create-endtime">End time *</label>
+          <input class="form-input" id="create-endtime" type="time" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="create-location">Location *</label>
+        <input class="form-input" id="create-location" type="text" placeholder="e.g. Library, Hostel, Online, or custom" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="create-max">Max participants (optional)</label>
+        <input class="form-input" id="create-max" type="number" min="2" max="50" placeholder="Leave empty for no limit" />
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:4px;">
+        <button class="btn btn-primary" onclick="handleCreateGroup()">Create Group</button>
+        <button class="btn btn-ghost" onclick="navigate('home')">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- PAGE: ROOM DETAIL                                        -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="page-room" class="page" style="display:none">
+
+    <div class="page-header">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" id="room-back-btn" onclick="navigate('home')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back
+        </button>
+        <div>
+          <h2 class="page-title" id="room-title">Loading…</h2>
+          <p class="page-subtitle" id="room-subtitle"></p>
+        </div>
+      </div>
+      <span id="room-status-pill"></span>
+    </div>
+
+    <!-- Room meta row -->
+    <div id="room-meta" class="room-meta-bar"></div>
+
+    <!-- Files section -->
+    <div class="room-files-card">
+      <div class="room-files-header">
+        <h3 class="room-files-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Session Files
+        </h3>
+        <div id="room-upload-wrap" style="display:none">
+          <label class="btn btn-primary btn-sm room-upload-label" for="room-file-input">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload
+          </label>
+          <input type="file" id="room-file-input" style="display:none" multiple onchange="handleRoomFileUpload(this)" />
+        </div>
+      </div>
+      <div id="room-files-list">
+        <div class="empty-state">Loading files…</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- #app -->
+
+<!-- ── Main App Script ──────────────────────────────────────── -->
+<script type="module">
+  import { router }      from './js/router.js';
+  import { signUp, signIn, signOut, onAuthStateChange } from './js/auth.js';
+  import { loadGroups, loadMyGroups, createGroup, joinGroup, leaveGroup, deleteGroup } from './js/groups.js';
+  import { initDarkMode, toggleDarkMode, renderRoomPage } from './js/ui.js';
+  import { loadRoom, loadRoomFiles, getRoomMembership, uploadRoomFile, deleteRoomFile, getFileUrl } from './js/roomFiles.js';
+
+  // ── State ──────────────────────────────────────────────────
+  let currentSearch  = '';
+  let currentSubject = '';
+  let currentLocation = '';
+  let currentTimeFilter = 'active';
+  let currentUser    = null;
+  let refreshTimerId = null;
+
+  // ── Expose to inline onclick handlers ─────────────────────
+  window.navigate          = (page, id) => router.navigate(page, id);
+  window.handleSignIn      = () => signIn(
+    document.getElementById('signin-email').value,
+    document.getElementById('signin-password').value
+  );
+  window.handleSignUp      = () => signUp(
+    document.getElementById('signup-email').value,
+    document.getElementById('signup-password').value
+  );
+  window.handleSignOut     = () => signOut();
+  window.handleThemeToggle = () => toggleDarkMode();
+  window.switchToSignUp    = () => {
+    document.getElementById('form-signin').style.display = 'none';
+    document.getElementById('form-signup').style.display = 'block';
+    return false;
+  };
+  window.switchToSignIn    = () => {
+    document.getElementById('form-signup').style.display = 'none';
+    document.getElementById('form-signin').style.display = 'block';
+    return false;
+  };
+  window.handleSearch  = (val) => { currentSearch = val; loadGroups(currentSearch, currentSubject, currentLocation, currentTimeFilter); };
+  window.handleFilter  = (subject) => {
+    currentSubject = subject;
+    document.querySelectorAll('.filter-pill').forEach(p => {
+      p.classList.toggle('active', p.textContent === (subject || 'All'));
+    });
+    loadGroups(currentSearch, currentSubject, currentLocation, currentTimeFilter);
+  };
+  window.handleLocationFilter = (loc) => {
+    currentLocation = (loc || '').trim();
+    loadGroups(currentSearch, currentSubject, currentLocation, currentTimeFilter);
+  };
+  window.handleTimeFilter = (tf) => {
+    currentTimeFilter = tf || 'active';
+    loadGroups(currentSearch, currentSubject, currentLocation, currentTimeFilter);
+  };
+  window.handleCreateGroup = async () => {
+    const formData = {
+      subject:     document.getElementById('create-subject').value,
+      description: document.getElementById('create-desc').value.trim(),
+      date:        document.getElementById('create-date').value,
+      time:        document.getElementById('create-time').value, // start time
+      end_time:    document.getElementById('create-endtime').value,
+      location:    document.getElementById('create-location').value.trim(),
+      max_members: document.getElementById('create-max').value, // optional
+    };
+    if (!formData.subject || !formData.date || !formData.time || !formData.end_time || !formData.location) {
+      import('./js/ui.js').then(({ showToast }) => showToast('Please fill in all required fields.', 'error'));
+      return;
+    }
+    await createGroup(formData);
+  };
+  window.joinGroup   = (id) => joinGroup(id);
+  window.leaveGroup  = (id) => leaveGroup(id);
+  window.deleteGroup = (id) => {
+    if (confirm('Delete this group? This cannot be undone.')) deleteGroup(id);
+  };
+
+  // ── Room page ───────────────────────────────────────────────
+  window.handleRoomFileUpload = async (input) => {
+    const roomId = router.currentRoomId;
+    if (!roomId) return;
+    const files = Array.from(input.files);
+    for (const file of files) {
+      await uploadRoomFile(roomId, file, () => loadCurrentRoom(roomId));
+    }
+    input.value = '';
+  };
+  window.handleDeleteFile = async (fileId, storagePath) => {
+    if (!confirm('Delete this file? This cannot be undone.')) return;
+    const roomId = router.currentRoomId;
+    await deleteRoomFile(fileId, storagePath, () => loadCurrentRoom(roomId));
+  };
+  window.handleDownloadFile = async (storagePath, fileName) => {
+    const url = await getFileUrl(storagePath);
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName; a.target = '_blank';
+    a.click();
+  };
+
+  async function loadCurrentRoom(roomId) {
+    const [room, files, { user, isMember, isHost }] = await Promise.all([
+      loadRoom(roomId),
+      loadRoomFiles(roomId),
+      getRoomMembership(roomId),
+    ]);
+    if (!room) { router.navigate('home'); return; }
+
+    // Back button: go to mygroups if user is host/member, else home
+    document.getElementById('room-back-btn').onclick =
+      () => router.navigate(isMember ? 'mygroups' : 'home');
+
+    renderRoomPage(room, files, user?.id, isMember, isHost);
+
+    // Show upload control only to host
+    document.getElementById('room-upload-wrap').style.display = isHost ? 'flex' : 'none';
+  }
+
+  // ── Auth state listener ────────────────────────────────────
+  onAuthStateChange((user) => {
+    currentUser = user;
+    const navbar = document.getElementById('navbar');
+
+    if (user) {
+      navbar.style.display = 'block';
+      if (router.currentPage === 'auth' || !router.currentPage) {
+        router.navigate('home');
+      }
+      // Keep room lifecycle fresh (Upcoming/Ongoing/Completed)
+      if (!refreshTimerId) {
+        refreshTimerId = setInterval(() => {
+          if (router.currentPage === 'home') loadGroups(currentSearch, currentSubject, currentLocation, currentTimeFilter);
+          if (router.currentPage === 'mygroups') loadMyGroups();
+        }, 60_000);
+      }
+    } else {
+      navbar.style.display = 'none';
+      router.navigate('auth');
+      if (refreshTimerId) {
+        clearInterval(refreshTimerId);
+        refreshTimerId = null;
+      }
+    }
+  });
+
+  // ── Router init ────────────────────────────────────────────
+  router.init((page, roomId) => {
+    // Update active nav link (room page has no nav highlight)
+    ['home', 'mygroups', 'create'].forEach(p => {
+      const el = document.getElementById(`nav-${p}`);
+      if (el) el.classList.toggle('active', p === page);
+    });
+
+    // Load data for the page
+    if (page === 'home')     loadGroups(currentSearch, currentSubject, currentLocation, currentTimeFilter);
+    if (page === 'mygroups') loadMyGroups();
+    if (page === 'room' && roomId) loadCurrentRoom(roomId);
+  });
+
+  // ── Dark mode ──────────────────────────────────────────────
+  initDarkMode();
+</script>
+
+</body>
+</html>
