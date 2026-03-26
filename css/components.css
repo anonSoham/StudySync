@@ -458,3 +458,6 @@
   color: var(--color-text-tertiary);
   font-size: 13px;
 }
+.room-locked .btn {
+  margin-top: 6px;
+}

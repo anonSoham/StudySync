@@ -393,12 +393,13 @@
   };
 
   async function loadCurrentRoom(roomId) {
-    const [room, files, { user, isMember, isHost }] = await Promise.all([
+    const [room, files, { user, isMember, isHost, memberCount }] = await Promise.all([
       loadRoom(roomId),
       loadRoomFiles(roomId),
       getRoomMembership(roomId),
     ]);
     if (!room) { router.navigate('home'); return; }
+    room.member_count = memberCount;
 
     // Back button: go to mygroups if user is host/member, else home
     document.getElementById('room-back-btn').onclick =

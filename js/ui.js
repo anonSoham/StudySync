@@ -196,10 +196,21 @@ export function renderRoomPage(room, files, currentUserId, isMember, isHost) {
   // Files list
   const container = document.getElementById('room-files-list');
   if (!isMember) {
+    const hasLimit = room.max_members !== null && room.max_members !== undefined && !Number.isNaN(Number(room.max_members));
+    const isFull = hasLimit && (room.member_count ?? 0) >= room.max_members;
+    let joinBtn = '';
+    if (statusLabel === 'Completed') {
+      joinBtn = `<button class="btn btn-disabled btn-sm" disabled>Ended</button>`;
+    } else if (isFull) {
+      joinBtn = `<button class="btn btn-disabled btn-sm" disabled>Full</button>`;
+    } else {
+      joinBtn = `<button class="btn btn-primary btn-sm" onclick="joinGroup('${room.id}')">Join Room</button>`;
+    }
     container.innerHTML = `
       <div class="room-locked">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <p>Join this room to view session files.</p>
+        ${joinBtn}
       </div>`;
     return;
   }

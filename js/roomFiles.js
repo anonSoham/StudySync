@@ -46,9 +46,15 @@ export async function getRoomMembership(groupId) {
     .eq('user_id', user.id)
     .maybeSingle();
 
-  const isHost   = group?.host_id === user.id;
-  const isMember = !!membership || isHost;
-  return { user, isMember, isHost };
+  const { data: allMembers } = await supabase
+    .from('memberships')
+    .select('user_id')
+    .eq('group_id', groupId);
+
+  const isHost      = group?.host_id === user.id;
+  const isMember    = !!membership || isHost;
+  const memberCount = allMembers?.length ?? 0;
+  return { user, isMember, isHost, memberCount };
 }
 
 // ── Upload one file ───────────────────────────────────────────
