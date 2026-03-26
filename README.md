@@ -6,6 +6,10 @@ A real-time study group coordination app for DKTE College students. Find, create
 
 ---
 
+## Screenshots
+
+![Room Detail](screenshots/room-detail.png)
+
 ## Features
 
 - **Auth** — Sign up / sign in restricted to `@dkte.ac.in` email addresses
