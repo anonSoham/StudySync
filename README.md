@@ -8,7 +8,13 @@ A real-time study group coordination app for DKTE College students. Find, create
 
 ## Screenshots
 
+![Home](screenshots/home.png)
+
 ![Room Detail](screenshots/room-detail.png)
+
+![Join Room](screenshots/room-join.png)
+
+![Session Files](screenshots/room-files.png)
 
 ## Features
 
